@@ -9,5 +9,4 @@ jobs:
       - name: Call our API route
         run: |
           curl --request POST \
-          --url 'https://backend-price-tracker-3q8l.vercel.app/api/TrackingProduct' \
-          --header 'Authorization: Bearer ${{ secrets.API_SECRET_KEY }}'
+          --url 'https://backend-price-tracker-3q8l.vercel.app/api/AllProducts'
