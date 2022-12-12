@@ -3,6 +3,8 @@ const { response } = require("express");
 const Category = require("../model/Category");
 const Product = require("../model/Product");
 const PriceTracker = require("../model/PriceTracker");
+const { URL, URLSearchParams } = require("url");
+const console = require("console");
 const productController = {
 
   getProduct: async (req, res, next) => {
@@ -35,28 +37,18 @@ const productController = {
   },
 
   getAll: async (req, res) => {
-    const keyword = req.query.keyword
-      ? {
-        short_url: {
-          $regex: req.query.keyword,
-          $options: "i",
-        },
-      }
-      : {};
-    const products = await Product.find({ ...keyword }).sort({ _id: -1 });
+    const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
+    const keyword = req.query.keyword;
+    const url_key = keyword.match(regex);
+    const products = await Product.find({ url_key }).sort({ _id: -1 });
     res.json({ products });
   },
 
   getPricesOfProductById: async (req, res) => {
-    const keyword = req.query.keyword
-      ? {
-        short_url: {
-          $regex: req.query.keyword,
-          $options: "i",
-        },
-      }
-      : {};
-    const product = await Product.findOne({ ...keyword }).sort({ _id: -1 });
+    const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
+    const keyword = req.query.keyword;
+    const url_key = keyword.match(regex);
+    const product = await Product.findOne({ url_key }).sort({ _id: -1 });
     console.log(product);
     if (product) {
       const prices = await PriceTracker.findOne({ id: [product.id] });
