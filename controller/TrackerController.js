@@ -19,14 +19,12 @@ const trackerController = {
                 price: data.price,
               });
               const pricesObj = await PriceTracker.findOne({ id: product.id });
-              console.log(pricesObj.prices);
               const lastPrice = pricesObj.prices.at(-1);
-              console.log(lastPrice);
 
               if (product.price != lastPrice.price) {
                 Product.findOneAndUpdate(
                   { id: product.id },
-                  { $set: { price: product.price1 } },
+                  { $set: { price: product.price } },
                   (err, data) => {
                     if (err) {
                       console.log(err);
@@ -43,10 +41,6 @@ const trackerController = {
                 }
               }
             })
-
-
-
-
           });
       } catch (err) { }
     });
