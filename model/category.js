@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema({
-  name: {
-    type: String,
-  },
-  icon_url: {
+  category_name: {
     type: String,
   },
   url: {

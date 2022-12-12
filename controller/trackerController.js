@@ -1,26 +1,27 @@
 const axios = require("axios");
-const urlController = require("../controller/urlController");
-const PriceTracker = require("../model/priceTracker");
-const Product = require("../model/product");
+const PriceTracker = require("../model/PriceTracker");
+const Product = require("../model/Product");
 const cron = require("node-cron");
+const Category = require("../model/Category");
 
 const trackerController = {
-  autoUpdate: async () => {
-    let listId = await urlController.getProductId();
-    listId.map(async (id) => {
+  autoUpdate: async (req, res) => {
+    const category = await Category.find({}, { _id: 1, url: 1, category_name: 1 });
+    category.map(async (s) => {
       try {
         axios
-          .get(`https://tiki.vn/api/v2/products/${id}`)
+          .get(s.url)
           .then(async (response) => {
-            try {
+            response.data.data.map(async (data) => {
               const product = new Product({
-                id: response.data.id,
-                name: response.data.name,
-                price: response.data.price,
+                id: data.id,
+                name: data.name,
+                price: data.price,
               });
-              // console.log(product);
-              const pricesObj = await PriceTracker.findOne({ id });
+              const pricesObj = await PriceTracker.findOne({ id: product.id });
+              console.log(pricesObj.prices);
               const lastPrice = pricesObj.prices.at(-1);
+              console.log(lastPrice);
 
               if (product.price != lastPrice.price) {
                 Product.findOneAndUpdate(
@@ -41,11 +42,13 @@ const trackerController = {
                   console.log("Not found");
                 }
               }
-            } catch (e) {
-              console.log(e);
-            }
+            })
+
+
+
+
           });
-      } catch (err) {}
+      } catch (err) { }
     });
   },
 
@@ -71,17 +74,17 @@ const trackerController = {
           });
           res.json(response.data["products"]);
         });
-    } catch (err) {}
+    } catch (err) { }
   },
 
   getAll: async (req, res) => {
     const keyword = req.query.keyword
       ? {
-          name: {
-            $regex: req.query.keyword,
-            $options: "i",
-          },
-        }
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
       : {};
     const data = await PriceTracker.find({ ...keyword }).sort({ _id: -1 });
     res.json({ data });

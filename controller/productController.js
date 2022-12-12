@@ -1,44 +1,34 @@
 const axios = require("axios");
 const { response } = require("express");
-const urlController = require("../controller/urlController");
-const Category = require("../model/category");
-const Product = require("../model/product");
-const PriceTracker = require("../model/priceTracker");
+const Category = require("../model/Category");
+const Product = require("../model/Product");
+const PriceTracker = require("../model/PriceTracker");
 const productController = {
-  getProduct: async (req, res) => {
-    let data = [];
-    let listId = await urlController.getProductId();
 
-    listId.map(async (id) => {
-      const currentProduct = await Product.findOne({ id });
-      if (id === currentProduct) {
-        console.log("data exists");
-      } else {
-        axios
-          .get(`https://tiki.vn/api/v2/products/${id}`)
-          .then(async (response) => {
-            const product = new Product({
-              id: response.data.id,
-              images: response.data.images,
-              name: response.data.name,
-              short_url: response.data.short_url,
-              inventory_status: response.data.inventory_status,
-              categories: response.data["categories"].name,
-              breadcrumbs: response.data.breadcrumbs,
-              price: response.data.price,
-            });
-
-            data.push(product);
-            console.log(data);
+  getProduct: async (req, res, next) => {
+    let listProduct = [];
+    const category = await Category.find({}, { _id: 1, url: 1, category_name: 1 });
+    category.map(async (s) => {
+      axios.get(s.url).then((response) => {
+        response.data.data.map(async (data) => {
+          console.log(data);
+          const product = new Product({
+            id: data.id,
+            image_url: data.thumbnail_url,
+            name: data.name,
+            url_key: data.url_key,
+            inventory_status: data.inventory_status,
+            category: s._id,
+            price: data.price
           })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+          listProduct.push(product);
+          // console.log(data);
+        });
+      })
     });
     setTimeout(async () => {
       await Product.deleteMany({});
-      await Product.insertMany(data).then((r) => {
+      await Product.insertMany(listProduct).then((r) => {
         res.json(r);
       });
     }, 3000);
@@ -47,11 +37,11 @@ const productController = {
   getAll: async (req, res) => {
     const keyword = req.query.keyword
       ? {
-          short_url: {
-            $regex: req.query.keyword,
-            $options: "i",
-          },
-        }
+        short_url: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
       : {};
     const products = await Product.find({ ...keyword }).sort({ _id: -1 });
     res.json({ products });
@@ -60,11 +50,11 @@ const productController = {
   getPricesOfProductById: async (req, res) => {
     const keyword = req.query.keyword
       ? {
-          short_url: {
-            $regex: req.query.keyword,
-            $options: "i",
-          },
-        }
+        short_url: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
       : {};
     const product = await Product.findOne({ ...keyword }).sort({ _id: -1 });
     console.log(product);

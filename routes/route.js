@@ -1,14 +1,8 @@
-const productController = require("../controller/productController");
+const productController = require("../controller/ProductController");
 const router = require("express").Router();
-const urlController = require("../controller/urlController");
-const trackerController = require("../controller/trackerController");
+const trackerController = require("../controller/TrackerController");
 const cron = require("node-cron");
-const categoryController = require("../controller/categoryController");
-
-// URL Controller
-router.post("/AddUrl", urlController.addUrl);
-router.get("/AllURL", urlController.getAllUrl);
-router.get("/AllProductID", urlController.getProductId);
+const categoryController = require("../controller/CategoryController");
 
 // Category Controller
 router.get("/AddCategory", categoryController.getCategories);
@@ -20,8 +14,8 @@ router.get("/PricesOfProduct", productController.getPricesOfProductById);
 // Category Controller
 router.get("/ProductByCategory", productController.getProductByCategory);
 // Tracking Controller
-router.get("/Tracker/Create", trackerController.createTracking);
-router.get("/Tracker/GetAllTrackings", trackerController.getAll);
+router.get("/Tracking/Create", trackerController.createTracking);
+router.get("/Tracking/GetAllTrackings", trackerController.getAll);
 
 cron.schedule("30 23 * * *", async () => {
   try {

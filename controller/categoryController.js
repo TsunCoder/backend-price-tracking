@@ -1,8 +1,6 @@
 const axios = require("axios");
-const urlController = require("../controller/urlController");
-const Category = require("../model/category");
-const Product = require("../model/product");
-const category = require("../data/category");
+const Category = require("../model/Category");
+const category = require("../data/ProductByCategory");
 
 const categoryController = {
   getCategories: async (req, res) => {

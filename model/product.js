@@ -1,39 +1,27 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const breadcrumbs = new Schema({
-  name: {
-    type: String,
-  },
-});
-
-const images = new Schema({
-  base_url: {
-    type: String,
-  },
-});
-
 const product = new Schema({
   id: {
     type: Number,
     required: true,
   },
-  images: [images],
+  image_url: {
+    type: String,
+  },
   name: {
     type: String,
   },
-  short_url: {
+  url_key: {
     type: String,
   },
   inventory_status: {
     type: String,
   },
-  categories: {
-    type: String,
-    required: true,
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'category'
   },
-  breadcrumbs: [breadcrumbs],
-
   price: {
     type: Number,
   },
