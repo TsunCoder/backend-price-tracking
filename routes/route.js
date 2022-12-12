@@ -10,6 +10,7 @@ router.get("/AllCategory", categoryController.getAll);
 // Product Controller
 router.get("/AddProduct", productController.getProduct);
 router.get("/AllProducts", productController.getAll);
+router.get("/ProductByUrl", productController.getProductByUrl)
 router.get("/PricesOfProduct", productController.getPricesOfProductById);
 // Category Controller
 router.get("/ProductByCategory", productController.getProductByCategory);

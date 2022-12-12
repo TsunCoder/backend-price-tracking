@@ -35,19 +35,39 @@ const productController = {
       });
     }, 3000);
   },
-
+  
   getAll: async (req, res) => {
+    const keyword = req.query.keyword
+      ? {
+          short_url: {
+            $regex: req.query.keyword,
+            $options: "i",
+          },
+        }
+      : {};
+    const products = await Product.find({ ...keyword }).sort({ _id: -1 });
+    res.json({ products });
+  },
+
+  getProductByUrl: async (req, res) => {
     const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
-    var keyword = req.query.keyword;
-    const url_key = keyword.match(regex);
+    const keyword = req.query.keyword;
+
+    const parsed = new URL(keyword);
+    parsed.toString();
+    const url_key = parsed.pathname.match(regex);
     const products = await Product.find({ url_key }).sort({ _id: -1 });
+
     res.json({ products });
   },
 
   getPricesOfProductById: async (req, res) => {
     const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
     var keyword = req.query.keyword;
-    const url_key = keyword.match(regex);
+    const parsed = new URL(keyword);
+    parsed.toString();
+
+    const url_key = parsed.pathname.match(regex);
     const product = await Product.findOne({ url_key }).sort({ _id: -1 });
     console.log(product);
     if (product) {
