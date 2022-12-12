@@ -38,7 +38,7 @@ const productController = {
 
   getAll: async (req, res) => {
     const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
-    const keyword = req.query.keyword;
+    var keyword = req.query.keyword;
     const url_key = keyword.match(regex);
     const products = await Product.find({ url_key }).sort({ _id: -1 });
     res.json({ products });
@@ -46,7 +46,7 @@ const productController = {
 
   getPricesOfProductById: async (req, res) => {
     const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
-    const keyword = req.query.keyword;
+    var keyword = req.query.keyword;
     const url_key = keyword.match(regex);
     const product = await Product.findOne({ url_key }).sort({ _id: -1 });
     console.log(product);
