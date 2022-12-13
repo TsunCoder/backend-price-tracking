@@ -61,17 +61,17 @@ const productController = {
     res.json({ products });
   },
 
-  getPricesOfProductById: async (req, res) => {
+  getPricesOfProductByURL: async (req, res) => {
     const regex = /([A-Za-z0-9]+(-+[A-Za-z0-9]+)+)/i;
     var keyword = req.query.keyword;
     const parsed = new URL(keyword);
     parsed.toString();
 
     const url_key = parsed.pathname.match(regex);
-    const product = await Product.findOne({ url_key }).sort({ _id: -1 });
+    const product = await Product.findOne({ url_key });
     console.log(product);
     if (product) {
-      const prices = await PriceTracker.findOne({ id: [product.id] });
+      const prices = await PriceTracker.findOne({ id: product.id });
       res.json({ prices });
     }
   },

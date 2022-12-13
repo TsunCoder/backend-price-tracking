@@ -8,19 +8,18 @@ const trackerController = {
   autoUpdate: async (req, res) => {
     const category = await Category.find({}, { _id: 1, url: 1, category_name: 1 });
     category.map(async (s) => {
-      try {
-        axios
-          .get(s.url)
-          .then(async (response) => {
-            response.data.data.map(async (data) => {
-              const product = new Product({
-                id: data.id,
-                name: data.name,
-                price: data.price,
-              });
-              const pricesObj = await PriceTracker.findOne({ id: product.id });
+      await axios
+        .get(s.url)
+        .then(async (response) => {
+          await response.data.data.map(async (data) => {
+            const product = new Product({
+              id: data.id,
+              name: data.name,
+              price: data.price,
+            });
+            const pricesObj = await PriceTracker.findOne({ id: product.id });
+            if (pricesObj) {
               const lastPrice = pricesObj.prices.at(-1);
-
               if (product.price != lastPrice.price) {
                 Product.findOneAndUpdate(
                   { id: product.id },
@@ -30,20 +29,21 @@ const trackerController = {
                       console.log(err);
                     } else {
                       console.log("Added");
+                      console.log(data);
                     }
                   }
                 );
-                if (pricesObj) {
-                  pricesObj.prices.push({ price: product.price });
-                  pricesObj.save();
-                } else {
-                  console.log("Not found");
-                }
+                pricesObj.prices.push({ price: product.price });
+                pricesObj.save();
               }
-            })
+            }
+            else {
+              console.log("Not found");
+            }
           });
-      } catch (err) { }
-    });
+        });
+    })
+    res.status(200).send('Success')
   },
 
   createTracking: async (req, res) => {
