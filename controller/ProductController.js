@@ -35,15 +35,15 @@ const productController = {
       });
     }, 3000);
   },
-  
+
   getAll: async (req, res) => {
     const keyword = req.query.keyword
       ? {
-          short_url: {
-            $regex: req.query.keyword,
-            $options: "i",
-          },
-        }
+        short_url: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
       : {};
     const products = await Product.find({ ...keyword }).sort({ _id: -1 });
     res.json({ products });
@@ -77,10 +77,11 @@ const productController = {
   },
 
   getProductByCategory: async (req, res) => {
-    const category = req.query.category;
+    const id = req.query.id;
     const products = await Product.find({
-      breadcrumbs: { $elemMatch: { name: category } },
-    }).sort({
+      category: id
+    },
+    ).sort({
       _id: -1,
     });
     res.json({ products });
