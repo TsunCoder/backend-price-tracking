@@ -86,6 +86,16 @@ const productController = {
     }
   },
 
+  getPricesOfProductById: async (req, res) => {
+    var id = req.query.id;
+
+    const product = await Product.findOne({ id: id });
+    if (product) {
+      const prices = await PriceTracker.findOne({ id: product.id });
+      res.json({ prices });
+    }
+  },
+
   getProductByCategory: async (req, res) => {
     const id = req.query.id;
     const products = await Product.find({

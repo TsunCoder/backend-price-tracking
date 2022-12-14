@@ -13,6 +13,7 @@ router.get("/AllProducts", productController.getAll);
 router.get("/ProductById", productController.getProductByID);
 router.get("/ProductByUrl", productController.getProductByUrl)
 router.get("/PricesOfProduct", productController.getPricesOfProductByURL);
+router.get("/PricesOfProductById", productController.getPricesOfProductById)
 // Category Controller
 router.get("/ProductByCategory", productController.getProductByCategory);
 // Tracking Controller
