@@ -13,7 +13,6 @@ const productController = {
     category.map(async (s) => {
       axios.get(s.url).then((response) => {
         response.data.data.map(async (data) => {
-          console.log(data);
           const product = new Product({
             id: data.id,
             image_url: data.thumbnail_url,
@@ -23,8 +22,10 @@ const productController = {
             category: s._id,
             price: data.price
           })
+
+
           listProduct.push(product);
-          // console.log(data);
+
         });
       })
     });
@@ -43,6 +44,10 @@ const productController = {
           $regex: req.query.keyword,
           $options: "i",
         },
+        id: {
+          $regex: req.query.keyword,
+          $options: "i"
+        }
       }
       : {};
     const products = await Product.find({ ...keyword }).sort({ _id: -1 });
