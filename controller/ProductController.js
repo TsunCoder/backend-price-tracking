@@ -44,13 +44,18 @@ const productController = {
           $regex: req.query.keyword,
           $options: "i",
         },
-        id: {
-          $regex: req.query.keyword,
-          $options: "i"
+        $match: {
+          _id: req.query.keyword.toString()
         }
       }
       : {};
     const products = await Product.find({ ...keyword }).sort({ _id: -1 });
+    res.json({ products });
+  },
+
+  getProductByID: async (req, res) => {
+    const id = req.query.id;
+    const products = await Product.find({ _id: id }).sort({ _id: -1 });
     res.json({ products });
   },
 
