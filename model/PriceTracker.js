@@ -9,7 +9,7 @@ const price = new Schema(
 );
 
 const priceTracker = new Schema({
-  id: { type: Number, required: true, ref:'Product' },
+  id: { type: Number, required: true },
   prices: [price],
 });
 

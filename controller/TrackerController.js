@@ -17,7 +17,7 @@ const trackerController = {
               name: data.name,
               price: data.price,
             });
-            const pricesObj = await PriceTracker.findOne({ id: product.id });
+            const pricesObj = await PriceTracker.findOne({id : product.id});
             if (pricesObj) {
               const lastPrice = pricesObj.prices.at(-1);
               if (product.price != lastPrice.price) {
@@ -38,7 +38,7 @@ const trackerController = {
               }
             }
             else {
-              console.log("Not found");
+              console.log(pricesObj);
             }
           });
         });
